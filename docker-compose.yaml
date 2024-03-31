@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # RabbitMQ server
+      - "15672:15672" # Management interface
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - app-network
+
+  head_office:
+    image: mysql:8.0
+    container_name: mysql_head_office
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: head_office
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - head_office_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+
+  branch_office1:
+    image: mysql:8.0
+    container_name: mysql_branch_office1
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword1
+      MYSQL_DATABASE: branch_office1
+      MYSQL_USER: user1
+      MYSQL_PASSWORD: password1
+    volumes:
+      - branch_office1_data:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    networks:
+      - app-network
+
+  branch_office2:
+    image: mysql:8.0
+    container_name: mysql_branch_office2
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword2
+      MYSQL_DATABASE: branch_office2
+      MYSQL_USER: user2
+      MYSQL_PASSWORD: password2
+    volumes:
+      - branch_office2_data:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    networks:
+      - app-network
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+volumes:
+  rabbitmq_data:
+  head_office_data:
+  branch_office1_data:
+  branch_office2_data:
+
+networks:
+  app-network:
+    driver: bridge
