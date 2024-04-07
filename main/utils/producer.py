@@ -19,10 +19,18 @@ class RabbitMQProducer :
             pika.ConnectionParameters(host=self.rabbitmq_host, credentials=credentials))
         channel = connection.channel()
 
-        channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type)
+        channel.exchange_declare(exchange=self.exchange_name, exchange_type=self.exchange_type, durable=True)
 
         routing_key = f"sales.{action}"
-        channel.basic_publish(exchange=self.exchange_name, routing_key=routing_key, body=message)
+        # In the `publish_message` method
+        channel.basic_publish(
+            exchange=self.exchange_name,
+            routing_key=routing_key,
+            body=message,  # Make sure the message is a byte string, e.g., json.dumps(message).encode()
+            properties=pika.BasicProperties(
+                delivery_mode=2,  # Make message persistent
+            )
+        )
 
         print(f" [x] Sent '{routing_key}':'{message}'")
 

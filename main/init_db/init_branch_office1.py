@@ -24,6 +24,8 @@ try:
       amt DECIMAL(10, 2),
       tax DECIMAL(10, 2),
       total DECIMAL(10, 2),
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
       id INT AUTO_INCREMENT PRIMARY KEY
     );
     """
