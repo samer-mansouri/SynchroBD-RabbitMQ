@@ -13,5 +13,6 @@ database = {
     'database': os.getenv('BRANCH_OFFICE_1_DB_NAME')
 }
 branche_office = 1
-app = SalesApp(root, "Sales CRUD Operations - Branch Office 1", database, branche_office)
+app = SalesApp(root, "Sales CRUD Operations - Branch Office 1", database, branche_office,
+                os.getenv('BRANCH_OFFICE_1_DB_REGION'))
 root.mainloop()

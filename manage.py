@@ -9,10 +9,10 @@ def init_head_office():
     call(["python", "-m", "main.init_db.init_head_office"])
 
 def init_branch_office_1():
-    call(["python", "-m", "main.init_db.init_branch_office_1"])
+    call(["python", "-m", "main.init_db.init_branch_office1"])
     
 def init_branch_office_2():
-    call(["python", "-m", "main.init_db.init_branch_office_2"])
+    call(["python", "-m", "main.init_db.init_branch_office2"])
 
 def branch_office_1():
     call(["python", "-m", "main.branch_offices.branch_office_1"])

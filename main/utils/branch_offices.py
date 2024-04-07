@@ -5,7 +5,7 @@ from main.utils.producer import RabbitMQProducer
 import json
 
 class SalesApp:
-    def __init__(self, master, title, database_config, branch_office):
+    def __init__(self, master, title, database_config, branch_office, db_region):
         self.master = master
         self.branch_office = branch_office
         self.master.title(title)
@@ -19,7 +19,7 @@ class SalesApp:
         # Initializing Producer
         self.producer = RabbitMQProducer()
 
-        
+        self.region = db_region
         # Styling
         style = ttk.Style(self.master)
         style.theme_use('clam')
@@ -59,8 +59,9 @@ class SalesApp:
         entry_frame = ttk.Frame(self.master, padding="10")
         entry_frame.pack(fill=tk.X, padx=10, pady=5)
         
-        labels = ["Date", "Region", "Product", "Qty", "Cost", "Amt", "Tax", "Total"]
+        labels = ["Date", "Product", "Qty", "Cost", "Amt", "Tax", "Total"]
         self.entries = {}
+        print("labels:", labels)
         for i, label in enumerate(labels):
             ttk.Label(entry_frame, text=label).grid(row=i, column=0, padx=10, pady=5, sticky="W")
             entry = ttk.Entry(entry_frame)
@@ -90,12 +91,13 @@ class SalesApp:
         data = {entry: self.entries[entry].get() for entry in self.entries}
         if all(data.values()):
             query = """
-                INSERT INTO sales (date, region, product, qty, cost, amt, tax, total)
+                INSERT INTO sales (date, product, qty, cost, amt, tax, total, region)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
             """
-            params = tuple(data[entry] for entry in self.entries)
+            params = tuple(data[entry] for entry in self.entries) + (self.region,)
             try:
                 data['remote_id'] = self.db_manager.insert(query, params=params)
+                data['region'] = self.region
                 print("remote_id:", data['remote_id'])
                 messagebox.showinfo("Success", "Record inserted successfully.")
                 self.producer.publish_message('insert', json.dumps({"branch_office_id": self.branch_office, "data": data}))
@@ -116,7 +118,7 @@ class SalesApp:
         data["remote_id"] = self.tree.item(selected_item, 'values')[-1]
         query = """
             UPDATE sales 
-            SET date=%s, region=%s, product=%s, qty=%s, cost=%s, amt=%s, tax=%s, total=%s 
+            SET date=%s, product=%s, qty=%s, cost=%s, amt=%s, tax=%s, total=%s 
             WHERE id=%s
         """
         params = tuple(data[entry] for entry in self.entries) + (self.tree.item(selected_item, 'values')[-1],)
@@ -161,6 +163,9 @@ class SalesApp:
         selected_item = self.tree.focus()  # Get the selected item
         if selected_item:  # If something is selected
             row = self.tree.item(selected_item, 'values')  # Get the item's values
+            ## remove from the tuple the element with index 1
+            row = row[:1] + row[2:]
+            print("Selected row:", row)
             self.selected_row = row  # Save the selected row data
             for key, entry in zip(self.entries.keys(), row):
                 self.entries[key].delete(0, tk.END)

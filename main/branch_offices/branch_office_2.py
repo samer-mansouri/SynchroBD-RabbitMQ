@@ -1,4 +1,3 @@
-import sys
 from main.utils.branch_offices import SalesApp
 import tkinter as tk
 import os
@@ -14,5 +13,7 @@ database = {
     'database': os.getenv('BRANCH_OFFICE_2_DB_NAME')
 }
 branche_office = 2
-app = SalesApp(root, "Sales CRUD Operations - Branch Office 2", database, branche_office)
+app = SalesApp(root, "Sales CRUD Operations - Branch Office 2", database, branche_office,
+                os.getenv('BRANCH_OFFICE_2_DB_REGION')
+               )
 root.mainloop()
