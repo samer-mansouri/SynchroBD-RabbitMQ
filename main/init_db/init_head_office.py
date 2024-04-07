@@ -1,11 +1,12 @@
 import mysql.connector
+import os
 
 config = {
-    'user': 'user',
-    'password': 'password',
-    'host': 'localhost',  
-    'port': '3306',
-    'database': 'head_office',
+    'user': os.getenv('HEAD_OFFICE_DB_USER'),
+    'password': os.getenv('HEAD_OFFICE_DB_PASSWORD'),
+    'host': os.getenv('HEAD_OFFICE_DB_HOST'),
+    'port': os.getenv('HEAD_OFFICE_DB_PORT'),
+    'database': os.getenv('HEAD_OFFICE_DB_NAME'),
     'raise_on_warnings': True
 }
 
